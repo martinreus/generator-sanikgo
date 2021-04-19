@@ -1,0 +1,19 @@
+{
+  "name": "generator-go-service",
+  "version": "0.1.0",
+  "description": "",
+  "scripts": {
+    "yo": "yo"
+  },
+  "files": [
+    "generators"
+  ],
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "dependencies": {
+    "yeoman-generator": "^1.1.1",
+    "yo": "^3.1.1"
+  },
+  "devDependencies": {}
+}
