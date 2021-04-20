@@ -2,19 +2,26 @@ var Generator = require('yeoman-generator');
 
 module.exports = class extends Generator {
 
-  // The name `constructor` is important here
   constructor(args, opts) {
-    // Calling the super constructor is important so our generator is correctly set up
     super(args, opts);
 
   }
   
-  method1() {
-    this.log('method 1 just ran');
+  initializing() {
+    this.composeWith(require.resolve('../base'));
+    this.composeWith(require.resolve('../openapi'));
   }
 
-  method2() {
-    this.log('method 2 just ran');
+  async prompting(){
+  }
+
+  configuring(){}
+
+  
+  writing(){}
+  
+  install(){}
+  end(){
   }
 
 };
