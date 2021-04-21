@@ -1,6 +1,8 @@
 var Generator = require('yeoman-generator');
 var fs = require('fs')
 var sanitize = require("../sanitize")
+const parseMakefile = require('@kba/makefile-parser')
+
 
 module.exports = class extends Generator {
 
@@ -53,7 +55,17 @@ module.exports = class extends Generator {
     this.log("configuration chosen:", this.templateConfig);
   }
 
-  configuring() { }
+  async configuring() {
+    await fs.stat(this.destinationPath(""), (err, stats) => {
+      if (!err) {
+        console.log("makefile does not exist, generating a new one");
+        this.makefileExists = false
+      } else {
+        this.makefileExists = true
+      }
+    });
+    this.makefileExists
+  }
 
 
   async writing() {

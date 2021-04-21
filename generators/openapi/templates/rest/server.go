@@ -67,7 +67,7 @@ func (s *serverInstance) Start(ctx context.Context) error {
 		}))
 
 	s.server = &http.Server{
-		Addr:    "localhost:<%=restApiPort=>",
+		Addr:    "localhost:<%=restApiPort%>",
 		Handler: router,
 		// Good practice to set timeouts to avoid Slowloris attacks.
 		WriteTimeout: time.Second * 15,

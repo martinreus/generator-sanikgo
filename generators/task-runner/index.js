@@ -1,5 +1,6 @@
 var Generator = require('yeoman-generator');
 var sanitize = require("../sanitize")
+var fs = require('fs')
 
 module.exports = class extends Generator {
 
@@ -22,7 +23,7 @@ module.exports = class extends Generator {
   configuring() { }
 
 
-  writing() {
+  async writing() {
 
     await fs.readdir(this.templatePath(""), (err, files) => {
       if (err) {
