@@ -1,8 +1,8 @@
-package <%=configPackageName%>
+package config
 
 import (
-	"<%=projectRoot%>/<%=genOutputPath%>"
-	"<%=projectRoot%>/pkg/tasks"
+	"<%=moduleName%>/<%=genOutputPath%>"
+	"<%=moduleName%>/pkg/tasks"
 	"github.com/go-chi/chi/v5/middleware"
 )
 

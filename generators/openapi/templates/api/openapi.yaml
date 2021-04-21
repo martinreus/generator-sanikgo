@@ -1,15 +1,15 @@
 openapi: "3.0.0"
 info:
   version: 1.0.0
-  title: Auth Service
-  description: REST API
+  title: <%=moduleName%> REST Api
+  description: REST API for <%=moduleName%>
 servers:
   - url: /v1
 paths:
   /health:
     get:
       description: |
-        Returns health status for this application
+        Returns health status for this REST api
       operationId: getHealthStatus
       responses:
         "200":

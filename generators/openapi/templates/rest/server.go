@@ -87,5 +87,5 @@ func (s *serverInstance) Stop(ctx context.Context) error {
 }
 
 func (s *serverInstance) TaskName() string {
-	return "restapi"
+	return "<%=openApiGenPackage%>"
 }

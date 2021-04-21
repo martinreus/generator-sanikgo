@@ -40,10 +40,13 @@ module.exports = class extends Generator {
         message: "Which port will the api run?"
       }
     ])
+
+    var openApiGenPackage = answers.genOutputPath.split("/").reverse()[0]
     this.templateConfig = {
       ...this.templateConfig,
       ...answers,
-      openApiGenPackage: answers.genOutputPath.split("/").reverse()[0]
+      openApiGenPackage,
+      moduleName: this.appname
     }
 
     this.log("configuration chosen:", this.templateConfig);
@@ -60,8 +63,7 @@ module.exports = class extends Generator {
 
     await fs.readdir(this.templatePath("rest"), (err, files) => {
       if (err) {
-        console.log(err)
-        return null
+        return err
       }
       files.map(filename => {
         console.log(filename)
@@ -70,6 +72,10 @@ module.exports = class extends Generator {
           this.templateConfig)
       })
     })
+
+    this.fs.copyTpl(this.templatePath(`config/configure.go`),
+      this.destinationPath(`cmd/config/${this.templateConfig.openApiGenPackage}.go`),
+      this.templateConfig)
   }
 
   install() {
