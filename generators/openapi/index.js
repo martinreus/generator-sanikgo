@@ -96,8 +96,6 @@ module.exports = class extends Generator {
       return
     }
 
-
-
     // go mod vendor
   }
   end() {
@@ -112,8 +110,8 @@ module.exports = class extends Generator {
       var makefileContent = this.fs.read(makefilePath)
       const { ast } = parseMakefile(makefileContent)
 
-      this._appendMakefileIfTargetDoesntExist(makefilePath, `generate-${this.templateConfig.openApiGenPackage}`, `makefile-generate.partial`)
-      this._appendMakefileIfTargetDoesntExist(makefilePath, `install-oapi-generator`, `makefile-install-oapi-gen.partial`)
+      this._appendMakefileIfTargetDoesntExist(ast, makefilePath, `install-oapi-generator`, `makefile-install-oapi-gen.partial`)
+      this._appendMakefileIfTargetDoesntExist(ast, makefilePath, `generate-${this.templateConfig.openApiGenPackage}`, `makefile-generate.partial`)
     } else {
       this.fs.copyTpl(this.templatePath('makefile-install-oapi-gen.partial'), this.destinationPath('Makefile'), this.templateConfig)
       this._appendMakefileTarget(makefilePath, `makefile-generate.partial`)
@@ -121,8 +119,8 @@ module.exports = class extends Generator {
 
   }
 
-  _appendMakefileIfTargetDoesntExist(makefilePath, makefileTarget, makefilePartialTemplatePath) {
-    var targetFound = ast.find((entry) => {
+  _appendMakefileIfTargetDoesntExist(makefileAst, makefilePath, makefileTarget, makefilePartialTemplatePath) {
+    var targetFound = makefileAst.find((entry) => {
       if (entry && entry.target == makefileTarget) {
         return true
       }
