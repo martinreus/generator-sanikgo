@@ -1,4 +1,4 @@
 
-.PHONY: generate-<%=openApiGenPackage=>
-generate-<%=openApiGenPackage=>: install-oapi-generator
-	oapi-codegen --config <%=openApiGenPackage=>-openapi-gen.cfg.yaml api/<%=openApiGenPackage=>-openapi.yml
+.PHONY: generate-<%=openApiGenPackage%>
+generate-<%=openApiGenPackage%>: install-oapi-generator
+	oapi-codegen --config <%=openApiGenPackage%>-openapi-gen.cfg.yaml api/<%=openApiGenPackage%>-openapi.yml

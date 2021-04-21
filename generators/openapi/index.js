@@ -10,7 +10,6 @@ module.exports = class extends Generator {
   constructor(args, opts) {
     // Calling the super constructor is important so our generator is correctly set up
     super(args, opts);
-
   }
 
   initializing() { }
@@ -52,19 +51,9 @@ module.exports = class extends Generator {
       moduleName: sanitize.appName(this.appname)
     }
 
-    this.log("configuration chosen:", this.templateConfig);
   }
 
   async configuring() {
-    await fs.stat(this.destinationPath(""), (err, stats) => {
-      if (!err) {
-        console.log("makefile does not exist, generating a new one");
-        this.makefileExists = false
-      } else {
-        this.makefileExists = true
-      }
-    });
-    this.makefileExists
   }
 
 
@@ -97,6 +86,8 @@ module.exports = class extends Generator {
     this.fs.copyTpl(this.templatePath(`openapi-gen.cfg.yaml`),
       this.destinationPath(`${this.templateConfig.openApiGenPackage}-openapi-gen.cfg.yaml`),
       this.templateConfig)
+
+    this._updateMakefile()
   }
 
   install() {
@@ -113,5 +104,39 @@ module.exports = class extends Generator {
     this.log("finished open api");
   }
 
+  async _updateMakefile() {
+    var makefilePath = this.destinationPath('Makefile')
 
+    if (this.fs.exists(makefilePath)) {
+      // makefile exists, so append content to it
+      var makefileContent = this.fs.read(makefilePath)
+      const { ast } = parseMakefile(makefileContent)
+
+      this._appendMakefileIfTargetDoesntExist(makefilePath, `generate-${this.templateConfig.openApiGenPackage}`, `makefile-generate.partial`)
+      this._appendMakefileIfTargetDoesntExist(makefilePath, `install-oapi-generator`, `makefile-install-oapi-gen.partial`)
+    } else {
+      this.fs.copyTpl(this.templatePath('makefile-install-oapi-gen.partial'), this.destinationPath('Makefile'), this.templateConfig)
+      this._appendMakefileTarget(makefilePath, `makefile-generate.partial`)
+    }
+
+  }
+
+  _appendMakefileIfTargetDoesntExist(makefilePath, makefileTarget, makefilePartialTemplatePath) {
+    var targetFound = ast.find((entry) => {
+      if (entry && entry.target == makefileTarget) {
+        return true
+      }
+      false
+    })
+    if (!targetFound) {
+      this._appendMakefileTarget(makefilePath, makefilePartialTemplatePath)
+    }
+  }
+
+  _appendMakefileTarget(makefilePath, partialFilePath) {
+    // create temporary makefile using templating
+    this.fs.copyTpl(this.templatePath(partialFilePath), this.destinationPath(`.tmp/${partialFilePath}`), this.templateConfig)
+    this.fs.append(makefilePath, this.fs.read(this.destinationPath(`.tmp/${partialFilePath}`)))
+    this.fs.delete(this.destinationPath(`.tmp/${partialFilePath}`))
+  }
 };
