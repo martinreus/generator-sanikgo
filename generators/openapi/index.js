@@ -1,5 +1,6 @@
 var Generator = require('yeoman-generator');
-var fs = require('fs');
+var fs = require('fs')
+var sanitize = require("../sanitize")
 
 module.exports = class extends Generator {
 
@@ -46,7 +47,7 @@ module.exports = class extends Generator {
       ...this.templateConfig,
       ...answers,
       openApiGenPackage,
-      moduleName: this.appname
+      moduleName: sanitize.appName(this.appname)
     }
 
     this.log("configuration chosen:", this.templateConfig);
@@ -73,7 +74,7 @@ module.exports = class extends Generator {
       })
     })
 
-    this.fs.copyTpl(this.templatePath(`config/configure.go`),
+    this.fs.copyTpl(this.templatePath(`config/config.go`),
       this.destinationPath(`cmd/config/${this.templateConfig.openApiGenPackage}.go`),
       this.templateConfig)
   }

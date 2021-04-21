@@ -1,4 +1,5 @@
 var Generator = require('yeoman-generator');
+var sanitize = require("../sanitize")
 
 module.exports = class extends Generator {
 
@@ -10,20 +11,14 @@ module.exports = class extends Generator {
   }
 
   initializing() {
+    this.templateConfig = {
+      moduleName: sanitize.appName(this.appname) // Default to current folder name
+    }
 
+    this.log("app name", this.templateConfig.moduleName);
   }
 
   async prompting() {
-    this.templateConfig = await this.prompt([
-      {
-        type: "input",
-        name: "moduleName",
-        message: "Module's name",
-        default: this.appname.replace(" ", "-") // Default to current folder name
-      }
-    ]);
-
-    this.log("app name", this.templateConfig.moduleName);
   }
 
   configuring() { }

@@ -1,4 +1,4 @@
-package  <%=openApiGenPackage%>
+package <%=openApiGenPackage%>
 
 import (
 	"context"
