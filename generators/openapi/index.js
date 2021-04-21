@@ -77,6 +77,14 @@ module.exports = class extends Generator {
     this.fs.copyTpl(this.templatePath(`config/config.go`),
       this.destinationPath(`cmd/config/${this.templateConfig.openApiGenPackage}.go`),
       this.templateConfig)
+
+    this.fs.copyTpl(this.templatePath(`api/openapi.yaml`),
+      this.destinationPath(`api/${this.templateConfig.openApiGenPackage}-openapi.yaml`),
+      this.templateConfig)
+
+    this.fs.copyTpl(this.templatePath(`openapi-gen.cfg.yaml`),
+      this.destinationPath(`${this.templateConfig.openApiGenPackage}-openapi-gen.cfg.yaml`),
+      this.templateConfig)
   }
 
   install() {
@@ -92,5 +100,6 @@ module.exports = class extends Generator {
   end() {
     this.log("finished open api");
   }
+
 
 };
