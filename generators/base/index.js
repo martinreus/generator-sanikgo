@@ -30,7 +30,6 @@ module.exports = class extends Generator {
 
   install() { }
   end() {
-    console.log("finished base app generation");
   }
 
 };

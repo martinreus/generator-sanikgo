@@ -40,7 +40,6 @@ module.exports = class extends Generator {
 
   install() { }
   end() {
-    console.log("finished task runner generation");
   }
 
 };
