@@ -12,6 +12,7 @@
     "yeoman-generator"
   ],
   "dependencies": {
+    "@kba/makefile-parser": "0.0.3",
     "yeoman-generator": "^1.1.1",
     "yo": "^3.1.1"
   },

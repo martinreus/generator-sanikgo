@@ -1,7 +1,4 @@
 
-install-oapi-generator:
-	go get github.com/deepmap/oapi-codegen/cmd/oapi-codegen
-
-generate: install-oapi-generator
-	mkdir -p internal/webserver/restapi
-	oapi-codegen --config openapi-gen.cfg.yaml api/openapi.yml
+.PHONY: generate-<%=openApiGenPackage=>
+generate-<%=openApiGenPackage=>: install-oapi-generator
+	oapi-codegen --config <%=openApiGenPackage=>-openapi-gen.cfg.yaml api/<%=openApiGenPackage=>-openapi.yml

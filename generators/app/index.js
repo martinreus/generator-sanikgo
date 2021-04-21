@@ -6,22 +6,23 @@ module.exports = class extends Generator {
     super(args, opts);
 
   }
-  
+
   initializing() {
     this.composeWith(require.resolve('../base'));
+    this.composeWith(require.resolve('../task-runner'));
     this.composeWith(require.resolve('../openapi'));
   }
 
-  async prompting(){
+  async prompting() {
   }
 
-  configuring(){}
+  configuring() { }
 
-  
-  writing(){}
-  
-  install(){}
-  end(){
+
+  writing() { }
+
+  install() { }
+  end() {
   }
 
 };
