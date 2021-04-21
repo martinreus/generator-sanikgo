@@ -1,2 +1,2 @@
-module <%= moduleName %>
+module <%=moduleName%>
 

@@ -14,8 +14,6 @@ module.exports = class extends Generator {
     this.templateConfig = {
       moduleName: sanitize.appName(this.appname) // Default to current folder name
     }
-
-    this.log("app name", this.templateConfig.moduleName);
   }
 
   async prompting() {
@@ -24,7 +22,11 @@ module.exports = class extends Generator {
   configuring() { }
 
 
-  writing() { }
+  writing() {
+    this.fs.copyTpl(this.templatePath(`go.mod`),
+      this.destinationPath(`go.mod`),
+      this.templateConfig)
+  }
 
   install() { }
   end() {
