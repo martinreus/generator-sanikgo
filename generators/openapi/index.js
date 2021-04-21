@@ -2,7 +2,7 @@ var Generator = require('yeoman-generator');
 var fs = require('fs')
 var sanitize = require("../sanitize")
 const parseMakefile = require('@kba/makefile-parser')
-
+let ora = require("ora");
 
 module.exports = class extends Generator {
 
@@ -96,7 +96,14 @@ module.exports = class extends Generator {
       return
     }
 
-    // go mod vendor
+    // make generate-
+    let spinner = ora().start("Generating files from OpenAPI spec")
+    this.spawnCommand("make", [`generate-${this.templateConfig.openApiGenPackage}`])
+    spinner.succeed("Done")
+    // run go mod vendor
+    spinner = ora().start("running go mod vendor")
+    this.spawnCommand("go", [`mod`, `vendor`])
+    spinner.succeed("done.")
   }
   end() {
     this.log("finished open api");
