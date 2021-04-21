@@ -1,4 +1,5 @@
 var Generator = require('yeoman-generator');
+var fs = require('fs');
 
 module.exports = class extends Generator {
 
@@ -36,7 +37,7 @@ module.exports = class extends Generator {
         type: "number",
         name: "restApiPort",
         default: 8080,
-        message: "Which port will this run under?"
+        message: "Which port will the api run?"
       }
     ])
     this.templateConfig = { ...this.templateConfig, ...answers }
@@ -47,12 +48,19 @@ module.exports = class extends Generator {
   configuring() { }
 
 
-  writing() {
+  async writing() {
     // generate only if needed
     if (!this.templateConfig.genOpenAPI) {
       return
     }
 
+    await fs.readdir(this.templatePath("/rest"), (_, files) => {
+
+      files.map(filename => {
+        console.log(filename)
+        this.fs.copyTpl(this.templatePath(`/rest/${files}`), this.destinationPath(`${this.templateConfig.genOutputPath}/${filename}`))
+      })
+    })
   }
 
   install() {
@@ -60,6 +68,8 @@ module.exports = class extends Generator {
     if (!this.templateConfig.genOpenAPI) {
       return
     }
+
+
 
     // go mod vendor
   }
