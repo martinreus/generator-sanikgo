@@ -90,7 +90,7 @@ module.exports = class extends Generator {
     this._updateMakefile()
   }
 
-  install() {
+  async install() {
     // install only if needed
     if (!this.templateConfig.genOpenAPI) {
       return
@@ -98,11 +98,11 @@ module.exports = class extends Generator {
 
     // make generate-
     let spinner = ora().start("Generating files from OpenAPI spec")
-    this.spawnCommand("make", [`generate-${this.templateConfig.openApiGenPackage}`])
+    await this.spawnCommand("make", [`generate-${this.templateConfig.openApiGenPackage}`])
     spinner.succeed("Done")
     // run go mod vendor
     spinner = ora().start("running go mod vendor")
-    this.spawnCommand("go", [`mod`, `vendor`])
+    await this.spawnCommand("go", [`mod`, `vendor`])
     spinner.succeed("done.")
   }
   end() {
