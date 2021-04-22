@@ -12,7 +12,9 @@ module.exports = class extends Generator {
     super(args, opts);
   }
 
-  initializing() { }
+  initializing() {
+    this.composeWith(require.resolve('../task-runner'));
+  }
 
   async prompting() {
     var answers = await this.prompt([

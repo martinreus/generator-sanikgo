@@ -89,3 +89,7 @@ func (s *serverInstance) Stop(ctx context.Context) error {
 func (s *serverInstance) TaskName() string {
 	return "<%=openApiGenPackage%>"
 }
+
+func (s *serverInstance) Status() tasks.Status {
+	return tasks.Status{}
+}
