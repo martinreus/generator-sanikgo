@@ -2,6 +2,10 @@
 
 An opinionated go microservice generator using the [Yeoman](https://yeoman.io) generator. Requires node to be installed.
 
+## Before you proceed
+
+You will need yeoman (and therefore node) + go installed. Also, [GOPATH and GOBIN](https://essential-go.programming-books.io/gopath-goroot-gobin-d6da4b8481f94757bae43be1fdfa9e73) must be correctly configured in your environment (or just add your go/bin to the PATH variable).
+
 ## What is generated?
 
 This project has several yeoman targets, which can be called separately. However, the default target should generate a complete go microservice.

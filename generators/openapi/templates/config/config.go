@@ -6,7 +6,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func configure<%=openApiGenPackage%>() tasks.Task {
+func Configure<%=openApiGenPackage%>() tasks.Task {
 
 	server := <%=openApiGenPackage%>.New(<%=openApiGenPackage%>.WithMiddleware(middleware.Logger))
 
