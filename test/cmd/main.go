@@ -3,35 +3,18 @@ package main
 import (
 	"context"
 	"github.com/apex/log"
+	"github.com/apex/log/handlers/json"
 	"os"
 	"os/signal"
-	"test/cmd/config"
-	"test/pkg/tasks"
+	"test/cmd/server"
 )
 
 func main() {
 
-	var tasksInfo *[]tasks.Info
-	var taskList []tasks.Task
 	ctx := context.Background()
+	log.SetHandler(json.New(os.Stdout))
 
-	// create a bunch of tasks
-	taskList = append(taskList, config.ConfigureRest(tasksInfo))
-
-	// aggregate all tasksInfo into the pointer above
-
-
-	// then start all of them
-	for _, task := range taskList {
-		task := task
-		go func() {
-			if err := task.Start(ctx); err != nil {
-				log.WithError(err).Errorf("Error while start task '%s'", task.Name())
-			} else {
-				log.Infof("Started task '%s'", task.Name())
-			}
-		}()
-	}
+	server.Instance.StartAllTasks(ctx)
 
 	c := make(chan os.Signal, 1)
 	// We'll accept graceful shutdowns when quit via SIGINT (Ctrl+C)
@@ -39,15 +22,7 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 	<-c
 
+	server.Instance.StopAllTasks(ctx)
 
-	// stop all tasks
-	for _, task := range taskList {
-		task := task
-		if err := task.Stop(ctx); err != nil {
-			log.WithError(err).Errorf("Error while stopping task '%s'", task.Name())
-		} else {
-			log.Infof("Stopped task '%s'", task.Name())
-		}
-	}
 
 }

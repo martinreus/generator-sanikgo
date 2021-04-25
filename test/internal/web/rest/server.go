@@ -2,10 +2,9 @@ package rest
 
 import (
 	"context"
+	"github.com/apex/log"
 	"github.com/go-chi/chi/v5"
-	"log"
 	"net/http"
-	"os"
 	"sync"
 	"test/pkg/tasks"
 	"time"
@@ -17,12 +16,11 @@ type serverInstance struct {
 	m           sync.Mutex
 	middlewares []func(http.Handler) http.Handler
 	baseUrl     string
-	logger      *log.Logger
 	server      *http.Server
-	tasksInfo   *[]tasks.Info
+	tasksInfo   *tasks.TaskInfoList
 }
 
-func WithTaskInfoList(tasksInfo *[]tasks.Info) ServerOption {
+func WithTaskInfoList(tasksInfo *tasks.TaskInfoList) ServerOption {
 	return func(instance *serverInstance) {
 		instance.tasksInfo = tasksInfo
 	}
@@ -40,15 +38,8 @@ func WithBaseUrl(baseUrl string) ServerOption {
 	}
 }
 
-func WithLogger(logger *log.Logger) ServerOption {
-	return func(instance *serverInstance) {
-		instance.logger = logger
-	}
-}
-
 func New(serverOpts ...ServerOption) *serverInstance {
 	s := &serverInstance{
-		logger: log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile),
 	}
 
 	for _, opt := range serverOpts {
@@ -84,7 +75,7 @@ func (s *serverInstance) Start(ctx context.Context) error {
 	}
 
 	go func() {
-		s.logger.Print("Starting webserver..")
+		log.Info("Starting webserver..")
 		_ = s.server.ListenAndServe()
 	}()
 	return nil
