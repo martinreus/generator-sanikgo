@@ -2,7 +2,7 @@ package rest
 
 import (
 	"context"
-	"github.com/apex/log"
+	"errors"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 	"sync"
@@ -18,6 +18,7 @@ type serverInstance struct {
 	baseUrl     string
 	server      *http.Server
 	tasksInfo   *tasks.TaskInfoList
+	status      tasks.Status
 }
 
 func WithTaskInfoList(tasksInfo *tasks.TaskInfoList) ServerOption {
@@ -40,6 +41,10 @@ func WithBaseUrl(baseUrl string) ServerOption {
 
 func New(serverOpts ...ServerOption) *serverInstance {
 	s := &serverInstance{
+		status:      tasks.Status{
+			State: tasks.Stopped,
+			Err:   errors.New("webserver not running"),
+		},
 	}
 
 	for _, opt := range serverOpts {
@@ -74,8 +79,22 @@ func (s *serverInstance) Start(ctx context.Context) error {
 		IdleTimeout:  time.Second * 60,
 	}
 
+	s.server.RegisterOnShutdown(func() {
+		s.m.Lock()
+		defer s.m.Unlock()
+		s.status = tasks.Status{
+			State: tasks.Stopped,
+			Err:   nil,
+		}
+	})
+
 	go func() {
-		log.Info("Starting webserver..")
+		s.m.Lock()
+		s.status = tasks.Status{
+			State: tasks.Running,
+			Err:   nil,
+		}
+		s.m.Unlock()
 		_ = s.server.ListenAndServe()
 	}()
 	return nil
@@ -90,7 +109,7 @@ func (s *serverInstance) Name() string {
 }
 
 func (s *serverInstance) Status() []tasks.Status {
-	return []tasks.Status{
-		{State: tasks.Running, Err: nil},
-	}
+	s.m.Lock()
+	defer s.m.Unlock()
+	return []tasks.Status{s.status}
 }
