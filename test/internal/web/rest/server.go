@@ -1,4 +1,4 @@
-package <%=openApiGenPackage%>
+package rest
 
 import (
 	"context"
@@ -19,6 +19,13 @@ type serverInstance struct {
 	baseUrl     string
 	logger      *log.Logger
 	server      *http.Server
+	tasksInfo   *[]tasks.Info
+}
+
+func WithTaskInfoList(tasksInfo *[]tasks.Info) ServerOption {
+	return func(instance *serverInstance) {
+		instance.tasksInfo = tasksInfo
+	}
 }
 
 func WithMiddleware(middleware func(http.Handler) http.Handler) ServerOption {
@@ -68,7 +75,7 @@ func (s *serverInstance) Start(ctx context.Context) error {
 		}))
 
 	s.server = &http.Server{
-		Addr:    "localhost:<%=restApiPort%>",
+		Addr:    "localhost:8080",
 		Handler: router,
 		// Good practice to set timeouts to avoid Slowloris attacks.
 		WriteTimeout: time.Second * 15,
@@ -88,7 +95,7 @@ func (s *serverInstance) Stop(ctx context.Context) error {
 }
 
 func (s *serverInstance) Name() string {
-	return "<%=openApiGenPackage%>"
+	return "rest"
 }
 
 func (s *serverInstance) Status() []tasks.Status {

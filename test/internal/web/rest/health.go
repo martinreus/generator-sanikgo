@@ -1,10 +1,10 @@
-package <%=openApiGenPackage%>
+package rest
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"<%=moduleName%>/pkg/tasks"
+	"test/pkg/tasks"
 )
 
 func (s *serverInstance) GetHealthStatus(w http.ResponseWriter, r *http.Request) {

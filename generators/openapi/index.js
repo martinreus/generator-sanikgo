@@ -3,6 +3,7 @@ var fs = require('fs')
 var sanitize = require("../sanitize")
 const parseMakefile = require('@kba/makefile-parser')
 let ora = require("ora");
+var _ = require('lodash');
 
 module.exports = class extends Generator {
 
@@ -46,10 +47,12 @@ module.exports = class extends Generator {
     ])
 
     var openApiGenPackage = answers.genOutputPath.split("/").reverse()[0]
+    var openApiGenPackageUpper = _.upperFirst(openApiGenPackage)
     this.templateConfig = {
       ...this.templateConfig,
       ...answers,
       openApiGenPackage,
+      openApiGenPackageUpper,
       moduleName: sanitize.appName(this.appname)
     }
 
