@@ -7,19 +7,19 @@ import (
 	"test/pkg/tasks"
 )
 
-type configuration struct {
+type serverInstance struct {
 	taskList []tasks.Task
 	tasksInfo *tasks.TaskInfoList
 	m sync.Mutex
 }
 
-var Instance = configuration{
+var Instance = serverInstance{
 	taskList:  []tasks.Task{},
 	tasksInfo: tasks.NewInfoList(),
 	m:         sync.Mutex{},
 }
 
-func (c *configuration) AppendTask(task tasks.Task) {
+func (c *serverInstance) AppendTask(task tasks.Task) {
 	c.m.Lock()
 	defer c.m.Unlock()
 
@@ -27,7 +27,7 @@ func (c *configuration) AppendTask(task tasks.Task) {
 	c.tasksInfo.Append(task)
 }
 
-func (c *configuration) StartAllTasks(ctx context.Context) {
+func (c *serverInstance) StartAllTasks(ctx context.Context) {
 	// then start all of them
 	for _, task := range c.taskList {
 		task := task
@@ -41,7 +41,7 @@ func (c *configuration) StartAllTasks(ctx context.Context) {
 	}
 }
 
-func (c *configuration) StopAllTasks(ctx context.Context) {
+func (c *serverInstance) StopAllTasks(ctx context.Context) {
 	// stop all tasks
 	for _, task := range c.taskList {
 		task := task
