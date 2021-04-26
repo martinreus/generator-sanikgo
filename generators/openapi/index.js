@@ -1,11 +1,10 @@
-var Generator = require('yeoman-generator');
 var fs = require('fs')
 var sanitize = require("../sanitize")
-const parseMakefile = require('@kba/makefile-parser')
 let ora = require("ora");
 var _ = require('lodash');
+const SuperGenerator = require('../super-generator');
 
-module.exports = class extends Generator {
+module.exports = class extends SuperGenerator {
 
   // The name `constructor` is important here
   constructor(args, opts) {
@@ -118,9 +117,6 @@ module.exports = class extends Generator {
 
     if (this.fs.exists(makefilePath)) {
       // makefile exists, so append content to it
-      var makefileContent = this.fs.read(makefilePath)
-      const { ast } = parseMakefile(makefileContent)
-
       this._appendMakefileIfTargetDoesntExist(ast, makefilePath, `install-oapi-generator`, `makefile-install-oapi-gen.partial`)
       this._appendMakefileIfTargetDoesntExist(ast, makefilePath, `generate-${this.templateConfig.openApiGenPackage}`, `makefile-generate.partial`)
     } else {
@@ -130,22 +126,4 @@ module.exports = class extends Generator {
 
   }
 
-  _appendMakefileIfTargetDoesntExist(makefileAst, makefilePath, makefileTarget, makefilePartialTemplatePath) {
-    var targetFound = makefileAst.find((entry) => {
-      if (entry && entry.target == makefileTarget) {
-        return true
-      }
-      false
-    })
-    if (!targetFound) {
-      this._appendMakefileTarget(makefilePath, makefilePartialTemplatePath)
-    }
-  }
-
-  _appendMakefileTarget(makefilePath, partialFilePath) {
-    // create temporary makefile using templating
-    this.fs.copyTpl(this.templatePath(partialFilePath), this.destinationPath(`.tmp/${partialFilePath}`), this.templateConfig)
-    this.fs.append(makefilePath, this.fs.read(this.destinationPath(`.tmp/${partialFilePath}`)))
-    this.fs.delete(this.destinationPath(`.tmp/${partialFilePath}`))
-  }
 };
