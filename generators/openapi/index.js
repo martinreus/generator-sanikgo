@@ -34,7 +34,7 @@ module.exports = class extends SuperGenerator {
       {
         type: "input",
         name: "genOutputPath",
-        default: "internal/web/rest",
+        default: "internal/web/restapi",
         message: "Where do you want to place generated openapi go files?"
       },
       {
@@ -117,8 +117,8 @@ module.exports = class extends SuperGenerator {
 
     if (this.fs.exists(makefilePath)) {
       // makefile exists, so append content to it
-      this._appendMakefileIfTargetDoesntExist(ast, makefilePath, `install-oapi-generator`, `makefile-install-oapi-gen.partial`)
-      this._appendMakefileIfTargetDoesntExist(ast, makefilePath, `generate-${this.templateConfig.openApiGenPackage}`, `makefile-generate.partial`)
+      this._appendMakefileIfTargetDoesntExist(makefilePath, `install-oapi-generator`, `makefile-install-oapi-gen.partial`)
+      this._appendMakefileIfTargetDoesntExist(makefilePath, `generate-${this.templateConfig.openApiGenPackage}`, `makefile-generate.partial`)
     } else {
       this.fs.copyTpl(this.templatePath('makefile-install-oapi-gen.partial'), this.destinationPath('Makefile'), this.templateConfig)
       this._appendMakefileTarget(makefilePath, `makefile-generate.partial`)

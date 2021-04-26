@@ -1,4 +1,4 @@
-package rest
+package <%=openApiGenPackage%>
 
 // these are errors returned by our REST API
 var (

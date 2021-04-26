@@ -12,7 +12,7 @@ func (s *serverInstance) GetHealthStatus(w http.ResponseWriter, r *http.Request)
 	errorList := s.createErrorListFromTasks()
 	healthStatus := HealthStatusStatusOK
 	if len(errorList) > 0 {
-		healthStatus = HealthStatusStatusUnavailable
+		healthStatus = HealthStatusStatusUNAVAILABLE
 		w.WriteHeader(http.StatusServiceUnavailable)
 	}
 
@@ -24,7 +24,7 @@ func (s *serverInstance) GetHealthStatus(w http.ResponseWriter, r *http.Request)
 
 func (s *serverInstance) createErrorListFromTasks() []Error {
 	var errorList []Error
-	for _, taskInfo := range *s.tasksInfo {
+	for _, taskInfo := range s.tasksInfo.GetTaskInfos() {
 		for _, status := range taskInfo.Status() {
 			if status.State == tasks.Error {
 				errorList = append(errorList, Error{
