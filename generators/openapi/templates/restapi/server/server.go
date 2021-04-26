@@ -2,11 +2,11 @@ package <%=openApiGenPackage%>
 
 import (
 	"context"
+	"errors"
 	"github.com/go-chi/chi/v5"
-	"log"
 	"net/http"
-	"os"
 	"sync"
+	"<%=moduleName%>/pkg/tasks"
 	"time"
 )
 
@@ -16,8 +16,15 @@ type serverInstance struct {
 	m           sync.Mutex
 	middlewares []func(http.Handler) http.Handler
 	baseUrl     string
-	logger      *log.Logger
 	server      *http.Server
+	tasksInfo   *tasks.TaskInfoList
+	status      tasks.Status
+}
+
+func WithTaskInfoList(tasksInfo *tasks.TaskInfoList) ServerOption {
+	return func(instance *serverInstance) {
+		instance.tasksInfo = tasksInfo
+	}
 }
 
 func WithMiddleware(middleware func(http.Handler) http.Handler) ServerOption {
@@ -32,15 +39,12 @@ func WithBaseUrl(baseUrl string) ServerOption {
 	}
 }
 
-func WithLogger(logger *log.Logger) ServerOption {
-	return func(instance *serverInstance) {
-		instance.logger = logger
-	}
-}
-
 func New(serverOpts ...ServerOption) *serverInstance {
 	s := &serverInstance{
-		logger: log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile),
+		status:      tasks.Status{
+			State: tasks.Stopped,
+			Err:   errors.New("webserver not running"),
+		},
 	}
 
 	for _, opt := range serverOpts {
@@ -67,7 +71,7 @@ func (s *serverInstance) Start(ctx context.Context) error {
 		}))
 
 	s.server = &http.Server{
-		Addr:    "localhost:<%=restApiPort%>",
+		Addr:    "localhost:8080",
 		Handler: router,
 		// Good practice to set timeouts to avoid Slowloris attacks.
 		WriteTimeout: time.Second * 15,
@@ -75,8 +79,22 @@ func (s *serverInstance) Start(ctx context.Context) error {
 		IdleTimeout:  time.Second * 60,
 	}
 
+	s.server.RegisterOnShutdown(func() {
+		s.m.Lock()
+		defer s.m.Unlock()
+		s.status = tasks.Status{
+			State: tasks.Stopped,
+			Err:   nil,
+		}
+	})
+
 	go func() {
-		s.logger.Print("Starting webserver..")
+		s.m.Lock()
+		s.status = tasks.Status{
+			State: tasks.Running,
+			Err:   nil,
+		}
+		s.m.Unlock()
 		_ = s.server.ListenAndServe()
 	}()
 	return nil
@@ -86,10 +104,12 @@ func (s *serverInstance) Stop(ctx context.Context) error {
 	return s.server.Shutdown(ctx)
 }
 
-func (s *serverInstance) TaskName() string {
-	return "<%=openApiGenPackage%>"
+func (s *serverInstance) Name() string {
+	return "rest"
 }
 
-func (s *serverInstance) Status() tasks.Status {
-	return tasks.Status{}
+func (s *serverInstance) Status() []tasks.Status {
+	s.m.Lock()
+	defer s.m.Unlock()
+	return []tasks.Status{s.status}
 }

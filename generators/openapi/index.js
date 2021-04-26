@@ -1,10 +1,10 @@
-var Generator = require('yeoman-generator');
 var fs = require('fs')
 var sanitize = require("../sanitize")
-const parseMakefile = require('@kba/makefile-parser')
 let ora = require("ora");
+var _ = require('lodash');
+const SuperGenerator = require('../super-generator');
 
-module.exports = class extends Generator {
+module.exports = class extends SuperGenerator {
 
   // The name `constructor` is important here
   constructor(args, opts) {
@@ -34,7 +34,7 @@ module.exports = class extends Generator {
       {
         type: "input",
         name: "genOutputPath",
-        default: "internal/web/rest",
+        default: "internal/web/restapi",
         message: "Where do you want to place generated openapi go files?"
       },
       {
@@ -46,10 +46,12 @@ module.exports = class extends Generator {
     ])
 
     var openApiGenPackage = answers.genOutputPath.split("/").reverse()[0]
+    var openApiGenPackageUpper = _.upperFirst(openApiGenPackage)
     this.templateConfig = {
       ...this.templateConfig,
       ...answers,
       openApiGenPackage,
+      openApiGenPackageUpper,
       moduleName: sanitize.appName(this.appname)
     }
 
@@ -65,20 +67,20 @@ module.exports = class extends Generator {
       return
     }
 
-    await fs.readdir(this.templatePath("rest"), (err, files) => {
+    await fs.readdir(this.templatePath("restapi/server"), (err, files) => {
       if (err) {
         return err
       }
       files.map(filename => {
         console.log(filename)
-        this.fs.copyTpl(this.templatePath(`rest/${filename}`),
+        this.fs.copyTpl(this.templatePath(`restapi/server/${filename}`),
           this.destinationPath(`${this.templateConfig.genOutputPath}/${filename}`),
           this.templateConfig)
       })
     })
 
-    this.fs.copyTpl(this.templatePath(`config/config.go`),
-      this.destinationPath(`cmd/config/${this.templateConfig.openApiGenPackage}.go`),
+    this.fs.copyTpl(this.templatePath(`restapi/instance/restapi.go`),
+      this.destinationPath(`cmd/app/${this.templateConfig.openApiGenPackage}.go`),
       this.templateConfig)
 
     this.fs.copyTpl(this.templatePath(`api/openapi.yaml`),
@@ -115,11 +117,8 @@ module.exports = class extends Generator {
 
     if (this.fs.exists(makefilePath)) {
       // makefile exists, so append content to it
-      var makefileContent = this.fs.read(makefilePath)
-      const { ast } = parseMakefile(makefileContent)
-
-      this._appendMakefileIfTargetDoesntExist(ast, makefilePath, `install-oapi-generator`, `makefile-install-oapi-gen.partial`)
-      this._appendMakefileIfTargetDoesntExist(ast, makefilePath, `generate-${this.templateConfig.openApiGenPackage}`, `makefile-generate.partial`)
+      this._appendMakefileIfTargetDoesntExist(makefilePath, `install-oapi-generator`, `makefile-install-oapi-gen.partial`)
+      this._appendMakefileIfTargetDoesntExist(makefilePath, `generate-${this.templateConfig.openApiGenPackage}`, `makefile-generate.partial`)
     } else {
       this.fs.copyTpl(this.templatePath('makefile-install-oapi-gen.partial'), this.destinationPath('Makefile'), this.templateConfig)
       this._appendMakefileTarget(makefilePath, `makefile-generate.partial`)
@@ -127,22 +126,4 @@ module.exports = class extends Generator {
 
   }
 
-  _appendMakefileIfTargetDoesntExist(makefileAst, makefilePath, makefileTarget, makefilePartialTemplatePath) {
-    var targetFound = makefileAst.find((entry) => {
-      if (entry && entry.target == makefileTarget) {
-        return true
-      }
-      false
-    })
-    if (!targetFound) {
-      this._appendMakefileTarget(makefilePath, makefilePartialTemplatePath)
-    }
-  }
-
-  _appendMakefileTarget(makefilePath, partialFilePath) {
-    // create temporary makefile using templating
-    this.fs.copyTpl(this.templatePath(partialFilePath), this.destinationPath(`.tmp/${partialFilePath}`), this.templateConfig)
-    this.fs.append(makefilePath, this.fs.read(this.destinationPath(`.tmp/${partialFilePath}`)))
-    this.fs.delete(this.destinationPath(`.tmp/${partialFilePath}`))
-  }
 };

@@ -1,7 +1,8 @@
-var Generator = require('yeoman-generator');
-var sanitize = require("../sanitize")
+var sanitize = require("../sanitize");
+const SuperGenerator = require('../super-generator');
 
-module.exports = class extends Generator {
+
+module.exports = class extends SuperGenerator {
 
   // The name `constructor` is important here
   constructor(args, opts) {
@@ -22,13 +23,16 @@ module.exports = class extends Generator {
   configuring() { }
 
 
-  writing() {
+  async writing() {
     this.fs.copyTpl(this.templatePath(`go.mod`),
       this.destinationPath(`go.mod`),
       this.templateConfig)
+
+    await this._copyFiles(this.templatePath("cmd"), this.destinationPath("cmd"))
   }
 
   install() { }
+
   end() {
   }
 

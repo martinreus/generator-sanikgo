@@ -13,6 +13,7 @@
   ],
   "dependencies": {
     "@kba/makefile-parser": "0.0.3",
+    "lodash": "^4.17.21",
     "ora": "^5.4.0",
     "yeoman-generator": "^1.1.1",
     "yo": "^3.1.1"
