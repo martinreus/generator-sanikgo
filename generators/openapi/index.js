@@ -68,20 +68,20 @@ module.exports = class extends Generator {
       return
     }
 
-    await fs.readdir(this.templatePath("rest"), (err, files) => {
+    await fs.readdir(this.templatePath("restapi/server"), (err, files) => {
       if (err) {
         return err
       }
       files.map(filename => {
         console.log(filename)
-        this.fs.copyTpl(this.templatePath(`rest/${filename}`),
+        this.fs.copyTpl(this.templatePath(`restapi/server/${filename}`),
           this.destinationPath(`${this.templateConfig.genOutputPath}/${filename}`),
           this.templateConfig)
       })
     })
 
-    this.fs.copyTpl(this.templatePath(`config/config.go`),
-      this.destinationPath(`cmd/config/${this.templateConfig.openApiGenPackage}.go`),
+    this.fs.copyTpl(this.templatePath(`restapi/instance/restapi.go`),
+      this.destinationPath(`cmd/app/${this.templateConfig.openApiGenPackage}.go`),
       this.templateConfig)
 
     this.fs.copyTpl(this.templatePath(`api/openapi.yaml`),
