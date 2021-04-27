@@ -52,8 +52,13 @@ module.exports = class SuperGenerator extends Generator {
 
   _appendMakefileTarget(makefilePath, partialFilePath, templateConfig) {
     // create temporary makefile using templating
+    this.log.write("supergenerator: templating")
     this.fs.copyTpl(this.templatePath(partialFilePath), this.destinationPath(`.tmp/${partialFilePath}`), templateConfig)
+    this.log.write("supergenerator: templating done")
+    // this.fs.append(makefilePath, this.fs.read(this.destinationPath(`.tmp/${partialFilePath}`)))
+    this.log.write("supergenerator: appending")
     this.fs.append(makefilePath, this.fs.read(this.destinationPath(`.tmp/${partialFilePath}`)))
-    this.fs.delete(this.destinationPath(`.tmp/${partialFilePath}`))
+    this.log.write("supergenerator: append done")
+    // this.fs.delete(this.destinationPath(`.tmp/${partialFilePath}`))
   }
 }

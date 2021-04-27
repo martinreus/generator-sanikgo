@@ -7,7 +7,8 @@ module.exports = class extends Generator {
   }
 
   initializing() {
-    return this.composeWith(require.resolve('../base')).composeWith(require.resolve('../openapi'));
+    this.composeWith(require.resolve('../base'));
+    this.composeWith(require.resolve('../openapi'));
   }
 
   async prompting() {

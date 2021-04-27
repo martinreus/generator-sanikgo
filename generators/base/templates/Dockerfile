@@ -4,7 +4,7 @@ FROM golang:1.13-buster as build
 WORKDIR /go/src/app
 ADD . /go/src/app
 
-RUN go build -o /go/bin/app
+RUN go build -o /go/bin/app ./cmd/main.go
 
 
 # Now copy it into our base image.
