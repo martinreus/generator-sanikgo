@@ -29,9 +29,15 @@ module.exports = class extends SuperGenerator {
       this.templateConfig)
 
     await this._copyFiles(this.templatePath("cmd"), this.destinationPath("cmd"))
+    await this._copyFiles(this.templatePath("root"), this.destinationPath(""))
   }
 
-  install() { }
+  install() {
+    // run go mod vendor
+    spinner = ora().start("Running go mod vendor")
+    this.spawnCommandSync("go", [`mod`, `vendor`])
+    spinner.succeed()
+  }
 
   end() {
   }
