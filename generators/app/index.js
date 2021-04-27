@@ -1,4 +1,5 @@
 var Generator = require('yeoman-generator');
+let ora = require("ora");
 
 module.exports = class extends Generator {
 
@@ -21,7 +22,12 @@ module.exports = class extends Generator {
 
   writing() { }
 
-  install() { }
+  install() {
+    // run go mod vendor
+    let spinner = ora().start("Running go mod vendor")
+    this.spawnCommandSync("go", [`mod`, `vendor`])
+    spinner.succeed()
+  }
   end() {
   }
 

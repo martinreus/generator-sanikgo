@@ -30,10 +30,6 @@ module.exports = class extends SuperGenerator {
   }
 
   install() {
-    // run go mod vendor
-    var spinner = ora().start("Running go mod vendor")
-    this.spawnCommandSync("go", [`mod`, `vendor`])
-    spinner.succeed()
   }
 
   end() {

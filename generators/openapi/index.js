@@ -104,10 +104,6 @@ module.exports = class extends SuperGenerator {
     let spinner = ora().start("Generating files from OpenAPI spec\n")
     this.spawnCommandSync("make", [`generate-${this.templateConfig.openApiGenPackage}`], { detached: false })
     spinner.succeed()
-    // run go mod vendor
-    spinner = ora().start("Running go mod vendor")
-    this.spawnCommandSync("go", [`mod`, `vendor`])
-    spinner.succeed()
   }
   end() {
   }
