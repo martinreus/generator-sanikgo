@@ -10,7 +10,7 @@ module.exports = class SuperGenerator extends Generator {
 
   }
 
-  async _copyFiles(from, to) {
+  async _copyFiles(from, to, templateConfig) {
     await fs.readdir(this.templatePath(from), (err, files) => {
       if (err) {
         return err
@@ -21,7 +21,7 @@ module.exports = class SuperGenerator extends Generator {
         } else {
           this.fs.copyTpl(this.templatePath(`${from}/${filename}`),
             this.destinationPath(`${to}/${filename}`),
-            this.templateConfig)
+            templateConfig)
         }
       })
     })

@@ -1,6 +1,5 @@
 var fs = require('fs')
 var sanitize = require("../sanitize")
-let ora = require("ora");
 var _ = require('lodash');
 const SuperGenerator = require('../super-generator');
 
@@ -67,17 +66,8 @@ module.exports = class extends SuperGenerator {
       return
     }
 
-    await fs.readdir(this.templatePath("restapi/server"), (err, files) => {
-      if (err) {
-        return err
-      }
-      files.map(filename => {
-        console.log(filename)
-        this.fs.copyTpl(this.templatePath(`restapi/server/${filename}`),
-          this.destinationPath(`${this.templateConfig.genOutputPath}/${filename}`),
-          this.templateConfig)
-      })
-    })
+    await this._copyFiles(this.templatePath("restapi/server"),
+      this.destinationPath(`${this.templateConfig.genOutputPath}`), this.templateConfig)
 
     this.fs.copyTpl(this.templatePath(`restapi/instance/restapi.go`),
       this.destinationPath(`cmd/app/${this.templateConfig.openApiGenPackage}.go`),
@@ -101,9 +91,8 @@ module.exports = class extends SuperGenerator {
     }
 
     // make generate-
-    let spinner = ora().start("Generating files from OpenAPI spec\n")
+    this.log.write("Generating files from openapi definition...")
     this.spawnCommandSync("make", [`generate-${this.templateConfig.openApiGenPackage}`], { detached: false })
-    spinner.succeed()
   }
   end() {
   }

@@ -1,8 +1,8 @@
-var Generator = require('yeoman-generator');
 var sanitize = require("../sanitize")
-var fs = require('fs')
+var fs = require('fs');
+const SuperGenerator = require('../super-generator');
 
-module.exports = class extends Generator {
+module.exports = class extends SuperGenerator {
 
   // The name `constructor` is important here
   constructor(args, opts) {
@@ -24,18 +24,7 @@ module.exports = class extends Generator {
 
 
   async writing() {
-
-    await fs.readdir(this.templatePath(""), (err, files) => {
-      if (err) {
-        return err
-      }
-      files.map(filename => {
-        console.log(filename)
-        this.fs.copyTpl(this.templatePath(`${filename}`),
-          this.destinationPath(`pkg/tasks/${filename}`),
-          this.templateConfig)
-      })
-    })
+    await this._copyFiles("", "", this.templateConfig)
   }
 
   install() { }

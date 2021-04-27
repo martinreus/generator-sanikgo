@@ -23,10 +23,8 @@ module.exports = class extends SuperGenerator {
 
   configuring() { }
 
-
   async writing() {
-    await this._copyFiles(this.templatePath("cmd"), this.destinationPath("cmd"))
-    await this._copyFiles(this.templatePath("root"), this.destinationPath(""))
+    await this._copyFiles(this.templatePath(""), this.destinationPath(""), this.templateConfig)
   }
 
   install() {
