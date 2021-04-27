@@ -1,6 +1,7 @@
 const Generator = require("yeoman-generator");
 var fs = require('fs')
-const parseMakefile = require('@kba/makefile-parser')
+const parseMakefile = require('@kba/makefile-parser');
+const { time } = require("console");
 
 module.exports = class SuperGenerator extends Generator {
   // The name `constructor` is important here
@@ -17,7 +18,7 @@ module.exports = class SuperGenerator extends Generator {
       }
       files.map(filename => {
         if (fs.lstatSync(`${from}/${filename}`).isDirectory()) {
-          this._copyFiles(`${from}/${filename}`, `${to}/${filename}`)
+          this._copyFiles(`${from}/${filename}`, `${to}/${filename}`, templateConfig)
         } else {
           this.fs.copyTpl(this.templatePath(`${from}/${filename}`),
             this.destinationPath(`${to}/${filename}`),
@@ -28,9 +29,12 @@ module.exports = class SuperGenerator extends Generator {
   }
 
   // appends a makefilePartialTemplatePath to a makefilePath, under the makefileTarget label
-  _appendMakefileIfTargetDoesntExist(makefilePath, makefileTarget, makefilePartialTemplatePath) {
+  _appendMakefileIfTargetDoesntExist(makefilePath, makefileTarget, makefilePartialTemplatePath, templateConfig) {
     var makefileContent = this.fs.read(makefilePath)
     const { ast } = parseMakefile(makefileContent)
+
+    this.log("parsed ast")
+    this.log(ast)
 
     var targetFound = ast.find((entry) => {
       if (entry && entry.target == makefileTarget) {
@@ -38,14 +42,17 @@ module.exports = class SuperGenerator extends Generator {
       }
       false
     })
-    if (!targetFound) {
-      this._appendMakefileTarget(makefilePath, makefilePartialTemplatePath)
+    this.log("\ntarge found? \n")
+    this.log(targetFound)
+    if (!!!targetFound) {
+      this.log("target not found, appending...")
+      this._appendMakefileTarget(makefilePath, makefilePartialTemplatePath, templateConfig)
     }
   }
 
-  _appendMakefileTarget(makefilePath, partialFilePath) {
+  _appendMakefileTarget(makefilePath, partialFilePath, templateConfig) {
     // create temporary makefile using templating
-    this.fs.copyTpl(this.templatePath(partialFilePath), this.destinationPath(`.tmp/${partialFilePath}`), this.templateConfig)
+    this.fs.copyTpl(this.templatePath(partialFilePath), this.destinationPath(`.tmp/${partialFilePath}`), templateConfig)
     this.fs.append(makefilePath, this.fs.read(this.destinationPath(`.tmp/${partialFilePath}`)))
     this.fs.delete(this.destinationPath(`.tmp/${partialFilePath}`))
   }

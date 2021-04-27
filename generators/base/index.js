@@ -1,6 +1,5 @@
 var sanitize = require("../sanitize");
 const SuperGenerator = require('../super-generator');
-let ora = require("ora");
 
 
 module.exports = class extends SuperGenerator {
@@ -24,10 +23,16 @@ module.exports = class extends SuperGenerator {
   configuring() { }
 
   async writing() {
+    this.log("base: writing files")
     await this._copyFiles(this.templatePath(""), this.destinationPath(""), this.templateConfig)
+    this.log("base: write finished")
   }
 
   install() {
+    // run go mod vendor
+    this.log("base: running go mod vendor")
+    this.spawnCommandSync("go", [`mod`, `vendor`])
+    this.log("base: go mod done")
   }
 
   end() {
