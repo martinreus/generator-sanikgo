@@ -1,5 +1,6 @@
 var sanitize = require("../sanitize");
 const SuperGenerator = require('../super-generator');
+let ora = require("ora");
 
 
 module.exports = class extends SuperGenerator {
@@ -24,17 +25,13 @@ module.exports = class extends SuperGenerator {
 
 
   async writing() {
-    this.fs.copyTpl(this.templatePath(`go.mod`),
-      this.destinationPath(`go.mod`),
-      this.templateConfig)
-
     await this._copyFiles(this.templatePath("cmd"), this.destinationPath("cmd"))
     await this._copyFiles(this.templatePath("root"), this.destinationPath(""))
   }
 
   install() {
     // run go mod vendor
-    spinner = ora().start("Running go mod vendor")
+    var spinner = ora().start("Running go mod vendor")
     this.spawnCommandSync("go", [`mod`, `vendor`])
     spinner.succeed()
   }
