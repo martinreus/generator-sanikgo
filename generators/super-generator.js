@@ -42,9 +42,7 @@ module.exports = class SuperGenerator extends Generator {
       }
       false
     })
-    this.log("\ntarge found? \n")
-    this.log(targetFound)
-    if (!!!targetFound) {
+    if (!targetFound) {
       this.log("target not found, appending...")
       this._appendMakefileTarget(makefilePath, makefilePartialTemplatePath, templateConfig)
     }
@@ -55,10 +53,9 @@ module.exports = class SuperGenerator extends Generator {
     this.log.write("supergenerator: templating")
     this.fs.copyTpl(this.templatePath(partialFilePath), this.destinationPath(`.tmp/${partialFilePath}`), templateConfig)
     this.log.write("supergenerator: templating done")
-    // this.fs.append(makefilePath, this.fs.read(this.destinationPath(`.tmp/${partialFilePath}`)))
     this.log.write("supergenerator: appending")
     this.fs.append(makefilePath, this.fs.read(this.destinationPath(`.tmp/${partialFilePath}`)))
     this.log.write("supergenerator: append done")
-    // this.fs.delete(this.destinationPath(`.tmp/${partialFilePath}`))
+    this.fs.delete(this.destinationPath(`.tmp/${partialFilePath}`))
   }
 }

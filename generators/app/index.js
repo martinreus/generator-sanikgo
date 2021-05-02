@@ -8,7 +8,6 @@ module.exports = class extends Generator {
 
   initializing() {
     this.composeWith(require.resolve('../base'));
-    this.composeWith(require.resolve('../openapi'));
   }
 
   async prompting() {
@@ -23,6 +22,12 @@ module.exports = class extends Generator {
   }
 
   end() {
+    // run go mod vendor
+    this.log("Initialising git repository..")
+    this.spawnCommandSync("git", [`init`])
+    this.spawnCommandSync("git", [`add`, `.`])
+    this.spawnCommandSync("git", [`commit`, `.`, `-m`, `Initial commit`])
+    this.spawnCommandSync("git", [`tag`, "1.0.0"])
   }
 
 };
