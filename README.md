@@ -8,11 +8,16 @@ You will need yeoman (and therefore node) + go installed. Also, [GOPATH and GOBI
 
 ## What is generated?
 
-This project has several yeoman targets, which can be called separately. However, the default target should generate a complete go microservice.
+This project has several yeoman targets, which can be called separately. However, the default target should generate a simple Go project structure.
+
+## How to use
+
+- `yo sanikgo`: generates a basic project with main needed files
+- `yo sanikgo:[target]`: see [available targets](#available-targets)
 
 #### Available targets
 
-###### sanikgo:base
+###### sanikgo:base (also invoked when not specifying any target)
 
 Generates all base files, including `go.mod`, `cmd/main.go`, `Dockerfile` and some base folder following [go package structure](https://github.com/golang-standards/project-layout) standards.
 
