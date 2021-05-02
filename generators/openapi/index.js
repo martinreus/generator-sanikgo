@@ -1,6 +1,4 @@
-var fs = require('fs')
 var sanitize = require("../sanitize")
-let ora = require("ora");
 var _ = require('lodash');
 const SuperGenerator = require('../super-generator');
 
@@ -13,7 +11,6 @@ module.exports = class extends SuperGenerator {
   }
 
   initializing() {
-    this.composeWith(require.resolve('../task-runner'));
   }
 
   async prompting() {
@@ -67,17 +64,9 @@ module.exports = class extends SuperGenerator {
       return
     }
 
-    await fs.readdir(this.templatePath("restapi/server"), (err, files) => {
-      if (err) {
-        return err
-      }
-      files.map(filename => {
-        console.log(filename)
-        this.fs.copyTpl(this.templatePath(`restapi/server/${filename}`),
-          this.destinationPath(`${this.templateConfig.genOutputPath}/${filename}`),
-          this.templateConfig)
-      })
-    })
+    this.log("openapi: writing files")
+    await this._copyFiles(this.templatePath("restapi/server"),
+      this.destinationPath(`${this.templateConfig.genOutputPath}`), this.templateConfig)
 
     this.fs.copyTpl(this.templatePath(`restapi/instance/restapi.go`),
       this.destinationPath(`cmd/app/${this.templateConfig.openApiGenPackage}.go`),
@@ -92,6 +81,8 @@ module.exports = class extends SuperGenerator {
       this.templateConfig)
 
     this._updateMakefile()
+
+    this.log("openapi: writing files finished")
   }
 
   install() {
@@ -99,15 +90,18 @@ module.exports = class extends SuperGenerator {
     if (!this.templateConfig.genOpenAPI) {
       return
     }
-
+    this.log.write("openapi: installing...")
     // make generate-
-    let spinner = ora().start("Generating files from OpenAPI spec\n")
+    this.log.write("openapi: generating files from openapi definition...")
     this.spawnCommandSync("make", [`generate-${this.templateConfig.openApiGenPackage}`], { detached: false })
-    spinner.succeed()
+    this.log.write("openapi: openapi files generated")
+
+
     // run go mod vendor
-    spinner = ora().start("Running go mod vendor")
+    this.log("openapi: running go mod vendor")
     this.spawnCommandSync("go", [`mod`, `vendor`])
-    spinner.succeed()
+    this.log("openapi: go mod done")
+
   }
   end() {
   }
@@ -117,11 +111,15 @@ module.exports = class extends SuperGenerator {
 
     if (this.fs.exists(makefilePath)) {
       // makefile exists, so append content to it
-      this._appendMakefileIfTargetDoesntExist(makefilePath, `install-oapi-generator`, `makefile-install-oapi-gen.partial`)
-      this._appendMakefileIfTargetDoesntExist(makefilePath, `generate-${this.templateConfig.openApiGenPackage}`, `makefile-generate.partial`)
+      this.log("openapi: makefile exists, adding targets..")
+      this._appendMakefileIfTargetDoesntExist(
+        makefilePath, `install-oapi-generator`, `makefile-install-oapi-gen.partial`, this.templateConfig)
+      this._appendMakefileIfTargetDoesntExist(
+        makefilePath, `generate-${this.templateConfig.openApiGenPackage}`, `makefile-generate.partial`, this.templateConfig)
     } else {
-      this.fs.copyTpl(this.templatePath('makefile-install-oapi-gen.partial'), this.destinationPath('Makefile'), this.templateConfig)
-      this._appendMakefileTarget(makefilePath, `makefile-generate.partial`)
+      this.log("openapi: makefile doesn't exist, creating new and generating targets.. ")
+      this.fs.copyTpl(this.templatePath('makefile-install-oapi-gen.partial'), makefilePath, this.templateConfig)
+      this._appendMakefileTarget(makefilePath, `makefile-generate.partial`, this.templateConfig)
     }
 
   }

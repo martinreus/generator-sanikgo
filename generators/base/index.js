@@ -22,16 +22,18 @@ module.exports = class extends SuperGenerator {
 
   configuring() { }
 
-
   async writing() {
-    this.fs.copyTpl(this.templatePath(`go.mod`),
-      this.destinationPath(`go.mod`),
-      this.templateConfig)
-
-    await this._copyFiles(this.templatePath("cmd"), this.destinationPath("cmd"))
+    this.log("base: writing files")
+    await this._copyFiles(this.templatePath(""), this.destinationPath(""), this.templateConfig)
+    this.log("base: write finished")
   }
 
-  install() { }
+  install() {
+    // run go mod vendor
+    this.log("base: running go mod vendor")
+    this.spawnCommandSync("go", [`mod`, `vendor`])
+    this.log("base: go mod done")
+  }
 
   end() {
   }
