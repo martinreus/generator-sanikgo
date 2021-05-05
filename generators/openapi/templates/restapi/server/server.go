@@ -105,7 +105,7 @@ func (s *serverInstance) Stop(ctx context.Context) error {
 }
 
 func (s *serverInstance) Name() string {
-	return "rest"
+	return "<%=openApiGenPackage%>"
 }
 
 func (s *serverInstance) Status() []tasks.Status {
