@@ -1,7 +1,7 @@
 {
   "name": "generator-sanikgo",
-  "version": "0.1.0",
-  "description": "",
+  "version": "1.0.0",
+  "description": "An opinionated go microservice generator using [Yeoman](https://yeoman.io).",
   "scripts": {
     "yo": "yo"
   },
@@ -19,5 +19,19 @@
     "yeoman-generator": "^1.1.1",
     "yo": "^3.1.1"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martinreus/generator-sanikgo.git"
+  },
+  "author": "Martin Reus",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/martinreus/generator-sanikgo/issues"
+  },
+  "homepage": "https://github.com/martinreus/generator-sanikgo#readme"
 }
