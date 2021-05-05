@@ -14,20 +14,8 @@ module.exports = class extends SuperGenerator {
   }
 
   async prompting() {
+    this.templateConfig = {}
     var answers = await this.prompt([
-      {
-        type: "confirm",
-        name: "genOpenAPI",
-        message: "Enable REST API via OpenAPI generator?"
-      }
-    ]);
-    this.templateConfig = { ...answers }
-
-    if (!this.templateConfig.genOpenAPI) {
-      return
-    }
-
-    answers = await this.prompt([
       {
         type: "input",
         name: "genOutputPath",
@@ -59,10 +47,6 @@ module.exports = class extends SuperGenerator {
 
 
   async writing() {
-    // generate only if needed
-    if (!this.templateConfig.genOpenAPI) {
-      return
-    }
 
     this.log("openapi: writing files")
     await this._copyFiles(this.templatePath("restapi/server"),
@@ -86,10 +70,6 @@ module.exports = class extends SuperGenerator {
   }
 
   install() {
-    // install only if needed
-    if (!this.templateConfig.genOpenAPI) {
-      return
-    }
     this.log.write("openapi: installing...")
     // make generate-
     this.log.write("openapi: generating files from openapi definition...")
