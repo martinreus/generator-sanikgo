@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/apex/log"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 	"sync"
@@ -16,7 +17,6 @@ type ServerOption func(instance *serverInstance)
 type serverInstance struct {
 	m           sync.Mutex
 	middlewares []func(http.Handler) http.Handler
-	baseUrl     string
 	server      *http.Server
 	tasksInfo   *tasks.TaskInfoList
 	status      tasks.Status
@@ -41,12 +41,6 @@ func WithMiddleware(middleware func(http.Handler) http.Handler) ServerOption {
 	}
 }
 
-func WithBaseUrl(baseUrl string) ServerOption {
-	return func(instance *serverInstance) {
-		instance.baseUrl = baseUrl
-	}
-}
-
 func New(serverOpts ...ServerOption) *serverInstance {
 	s := &serverInstance{
 		status: tasks.Status{
@@ -65,6 +59,11 @@ func New(serverOpts ...ServerOption) *serverInstance {
 }
 
 func (s *serverInstance) Start(ctx context.Context) error {
+	log.WithFields(log.Fields{
+		"serverPort": s.config.ServerPort,
+		"baseUrl": s.config.BaseUrl,
+	}).Infof("Server starting..")
+
 	router := chi.NewRouter()
 
 	var middlewares []MiddlewareFunc
@@ -77,7 +76,7 @@ func (s *serverInstance) Start(ctx context.Context) error {
 
 	router.Mount("/", HandlerWithOptions(
 		s, ChiServerOptions{
-			BaseURL:     s.baseUrl,
+			BaseURL:     s.config.BaseUrl,
 			Middlewares: middlewares,
 		}))
 
