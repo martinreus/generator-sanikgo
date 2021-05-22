@@ -19,7 +19,7 @@ module.exports = class extends SuperGenerator {
       {
         type: "input",
         name: "genOutputPath",
-        default: "internal/web/restapi",
+        default: "internal/restapi",
         message: "Where do you want to place generated openapi go files?"
       },
       {
