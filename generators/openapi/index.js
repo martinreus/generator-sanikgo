@@ -31,11 +31,13 @@ module.exports = class extends SuperGenerator {
     ])
 
     var openApiGenPackage = answers.genOutputPath.split("/").reverse()[0]
-    var openApiGenPackageUpper = _.upperFirst(openApiGenPackage)
+    var openApiGenPackageCamel = _.upperFirst(openApiGenPackage)
+    var openApiGenPackageUpper = _.upperCase(openApiGenPackage)
     this.templateConfig = {
       ...this.templateConfig,
       ...answers,
       openApiGenPackage,
+      openApiGenPackageCamel,
       openApiGenPackageUpper,
       moduleName: sanitize.appName(this.appname)
     }

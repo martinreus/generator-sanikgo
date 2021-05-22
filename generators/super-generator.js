@@ -33,9 +33,6 @@ module.exports = class SuperGenerator extends Generator {
     var makefileContent = this.fs.read(makefilePath)
     const { ast } = parseMakefile(makefileContent)
 
-    this.log("parsed ast")
-    this.log(ast)
-
     var targetFound = ast.find((entry) => {
       if (entry && entry.target == makefileTarget) {
         return true

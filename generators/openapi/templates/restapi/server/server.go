@@ -3,6 +3,7 @@ package <%=openApiGenPackage%>
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 	"sync"
@@ -19,6 +20,13 @@ type serverInstance struct {
 	server      *http.Server
 	tasksInfo   *tasks.TaskInfoList
 	status      tasks.Status
+	config      Config
+}
+
+func WithConfig(config Config) ServerOption {
+	return func(instance *serverInstance) {
+		instance.config = config
+	}
 }
 
 func WithTaskInfoList(tasksInfo *tasks.TaskInfoList) ServerOption {
@@ -41,9 +49,12 @@ func WithBaseUrl(baseUrl string) ServerOption {
 
 func New(serverOpts ...ServerOption) *serverInstance {
 	s := &serverInstance{
-		status:      tasks.Status{
+		status: tasks.Status{
 			State: tasks.Stopped,
 			Err:   errors.New("webserver not running"),
+		},
+		config: Config{
+			ServerPort: 8080,
 		},
 	}
 
@@ -71,7 +82,7 @@ func (s *serverInstance) Start(ctx context.Context) error {
 		}))
 
 	s.server = &http.Server{
-		Addr:    "localhost:8080",
+		Addr:    fmt.Sprintf("localhost:%d", s.config.ServerPort),
 		Handler: router,
 		// Good practice to set timeouts to avoid Slowloris attacks.
 		WriteTimeout: time.Second * 15,
