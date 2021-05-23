@@ -69,6 +69,7 @@ func (s *serverInstance) Start(ctx context.Context) error {
 	var middlewares []MiddlewareFunc
 
 	for _, middleware := range s.middlewares {
+		middleware := middleware
 		middlewares = append(middlewares, func(han http.HandlerFunc) http.HandlerFunc {
 			return middleware(han).ServeHTTP
 		})

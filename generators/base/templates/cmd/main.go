@@ -2,18 +2,17 @@ package main
 
 import (
 	"context"
-	"github.com/apex/log"
-	"github.com/apex/log/handlers/json"
 	"os"
 	"os/signal"
 	"<%=moduleName%>/cmd/app"
+	"<%=moduleName%>/pkg/logging"
 )
 
 func main() {
 
 	ctx := context.Background()
-	log.SetHandler(json.New(os.Stdout))
 
+	logging.Configure()
 	app.Instance.StartAllTasks(ctx)
 
 	c := make(chan os.Signal, 1)

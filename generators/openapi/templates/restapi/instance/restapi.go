@@ -1,13 +1,14 @@
 package app
 
 import (
-	"github.com/go-chi/chi/v5/middleware"
 	"<%=moduleName%>/<%=genOutputPath%>"
+	"<%=moduleName%>/pkg/middlewares"
 )
 
 func init() {
 	webServerInstance := <%=openApiGenPackage%>.New(
-		<%=openApiGenPackage%>.WithMiddleware(middleware.Logger),
+		<%=openApiGenPackage%>.WithMiddleware(middlewares.Recover),
+		<%=openApiGenPackage%>.WithMiddleware(middlewares.Logger()),
 		<%=openApiGenPackage%>.WithTaskInfoList(Instance.tasksInfo),
 		<%=openApiGenPackage%>.WithConfig(restapi.ConfigFromEnv()),
 	)
