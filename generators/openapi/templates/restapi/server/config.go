@@ -1,6 +1,6 @@
 package <%=openApiGenPackage%>
 
-import "test/pkg/env"
+import "<%=moduleName%>/pkg/env"
 
 type Config struct {
 	ServerPort int    `json:"serverPort""`

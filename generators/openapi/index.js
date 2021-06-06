@@ -66,7 +66,7 @@ module.exports = class extends SuperGenerator {
       this.templateConfig)
 
     this.fs.copyTpl(this.templatePath(`openapi-gen.cfg.yaml`),
-      this.destinationPath(`${this.templateConfig.openApiGenPackage}-openapi-gen.cfg.yaml`),
+      this.destinationPath(`config/${this.templateConfig.openApiGenPackage}-openapi-gen.cfg.yaml`),
       this.templateConfig)
 
     this._updateMakefile()
