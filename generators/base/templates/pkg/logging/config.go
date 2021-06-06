@@ -4,7 +4,7 @@ import (
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/json"
 	"os"
-	"test/pkg/env"
+	"<%=moduleName%>/pkg/env"
 )
 
 func Configure() {
