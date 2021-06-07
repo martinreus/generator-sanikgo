@@ -54,8 +54,8 @@ module.exports = class extends SuperGenerator {
     await this._copyFiles(this.templatePath("restapi/server"),
       this.destinationPath(`${this.templateConfig.genOutputPath}`), this.templateConfig)
 
-    await this._copyFiles(this.templatePath("restapi/middlewares"),
-      this.destinationPath(`pkg/middlewares`), this.templateConfig)
+    await this._copyFiles(this.templatePath("pkg"),
+      this.destinationPath(`pkg`), this.templateConfig)
 
     this.fs.copyTpl(this.templatePath(`restapi/instance/restapi.go`),
       this.destinationPath(`cmd/app/${this.templateConfig.openApiGenPackage}.go`),
