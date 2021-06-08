@@ -72,9 +72,10 @@ components:
       type: object
       required:
         - code
-        - message
       properties:
         code:
           type: string
         message:
           type: string
+        details:
+          type: object

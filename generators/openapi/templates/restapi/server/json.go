@@ -1,4 +1,4 @@
-package rest
+package <%=openApiGenPackage%>
 
 import (
 	"encoding/json"
@@ -12,16 +12,16 @@ const (
 
 type Validatable interface {
 	// Valid if json object implements this interface, we call it from UnmarshalJSON method
-	Valid() error
+	Valid() ValidationError
 }
 
-// UnmarshalJSON can be this simple to start with, but can be extended
+// decode can be this simple to start with, but can be extended
 // later to support different formats and behaviours without
 // changing the interface.
-func UnmarshalJSON(r *http.Request, v interface{}) error {
+func UnmarshalJSON(r *http.Request, v interface{}) ApiError {
 	defer r.Body.Close()
 	if err := json.NewDecoder(r.Body).Decode(v); err != nil {
-		return err
+		return UnmarshalError{Err: err}
 	}
 	if validatable, ok := v.(Validatable); ok {
 		return validatable.Valid()
@@ -46,4 +46,3 @@ func Unauthorized(w http.ResponseWriter, payload interface{}) error {
 	w.WriteHeader(http.StatusUnauthorized)
 	return json.NewEncoder(w).Encode(payload)
 }
-
