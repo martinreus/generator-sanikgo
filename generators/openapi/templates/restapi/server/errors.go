@@ -33,7 +33,7 @@ func (v ValidationError) ToApiError() Error {
 	return Error{
 		Code:    v.Code,
 		Details: v.Details,
-		Message: v.Error(),
+		Message: strPtr(v.Error()),
 	}
 }
 
@@ -44,6 +44,10 @@ func (u UnmarshalError) Error() string {
 func (u UnmarshalError) ToApiError() Error {
 	return Error{
 		Code:    UnmarshalErrorCode,
-		Message: u.Error(),
+		Message: strPtr(u.Error()),
 	}
+}
+
+func strPtr(str string) *string {
+	return &str
 }

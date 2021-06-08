@@ -29,7 +29,7 @@ func (s *serverInstance) createErrorListFromTasks() []Error {
 			if status.State == tasks.Error {
 				errorList = append(errorList, Error{
 					Code:    TaskError,
-					Message: fmt.Sprintf("Task '%s' contains errors: %v", taskInfo.Name(), status.Err.Error()),
+					Message: strPtr(fmt.Sprintf("Task '%s' contains errors: %v", taskInfo.Name(), status.Err.Error())),
 				})
 			}
 		}
