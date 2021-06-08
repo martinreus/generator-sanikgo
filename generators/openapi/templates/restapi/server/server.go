@@ -82,7 +82,7 @@ func (s *serverInstance) Start(ctx context.Context) error {
 		}))
 
 	s.server = &http.Server{
-		Addr:    fmt.Sprintf("localhost:%d", s.config.ServerPort),
+		Addr:    fmt.Sprintf("0.0.0.0:%d", s.config.ServerPort),
 		Handler: router,
 		// Good practice to set timeouts to avoid Slowloris attacks.
 		WriteTimeout: time.Second * 15,
