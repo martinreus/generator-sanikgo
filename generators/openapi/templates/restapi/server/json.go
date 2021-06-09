@@ -35,14 +35,14 @@ func WriteJSONPayload(w http.ResponseWriter, payload interface{}) error {
 	return json.NewEncoder(w).Encode(payload)
 }
 
-func BadRequest(w http.ResponseWriter, payload interface{}) error {
+func BadRequest(w http.ResponseWriter, apiError ApiError) error {
 	w.Header().Add(ContentType, ApplicationJson)
 	w.WriteHeader(http.StatusBadRequest)
-	return json.NewEncoder(w).Encode(payload)
+	return json.NewEncoder(w).Encode(apiError.ToApiError())
 }
 
-func Unauthorized(w http.ResponseWriter, payload interface{}) error {
+func Unauthorized(w http.ResponseWriter, apiError ApiError) error {
 	w.Header().Add(ContentType, ApplicationJson)
 	w.WriteHeader(http.StatusUnauthorized)
-	return json.NewEncoder(w).Encode(payload)
+	return json.NewEncoder(w).Encode(apiError.ToApiError())
 }
