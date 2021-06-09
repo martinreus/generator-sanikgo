@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"<%=moduleName%>/pkg/ptrs"
 	"<%=moduleName%>/pkg/tasks"
 )
 
@@ -29,7 +30,7 @@ func (s *serverInstance) createErrorListFromTasks() []Error {
 			if status.State == tasks.Error {
 				errorList = append(errorList, Error{
 					Code:    TaskError,
-					Message: strPtr(fmt.Sprintf("Task '%s' contains errors: %v", taskInfo.Name(), status.Err.Error())),
+					Message: ptrs.Str(fmt.Sprintf("Task '%s' contains errors: %v", taskInfo.Name(), status.Err.Error())),
 				})
 			}
 		}
